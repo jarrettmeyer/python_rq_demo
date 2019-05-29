@@ -1,0 +1,15 @@
+Flask==1.0.3
+Flask-Cors==3.0.7
+Flask-Jsonpify==1.5.0
+Flask-Migrate==2.5.2
+Flask-SQLAlchemy==2.4.0
+pip==19.1.1
+psycopg2==2.8.2
+pylint==2.3.1
+pylint-flask==0.6
+pylint-sqlalchemy==0.1.0
+pytz==2019.1
+redis==3.2.1
+rope==0.14.0
+rq==1.0
+setuptools==41.0.1

@@ -1,0 +1,53 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    line-height: 1.6em;
+    margin: 0;
+    padding: 1em;
+}
+
+h1 {
+    font-size: 2em;
+}
+
+input, textarea {
+    display: block;
+    border-radius: 0.5em;
+    border-style: solid;
+    border-width: 1px;
+    border-color: rgb(72, 72, 72);
+    padding: 0.5em;
+    width: 20em;
+}
+
+label {
+    color: rgb(68, 68, 68);
+    display: block;
+    font-weight: bold;
+}
+
+p {
+    margin-bottom: 1em;
+}
+
+p.error {
+    background-color: lightpink;
+    color: darkred;
+    padding: 1em;
+}
+
+p.info {
+    background-color: lightblue;
+    color: darkblue;
+    padding: 1em;
+}
+
+pre {
+    padding: 1em;
+    background-color: rgb(220, 220, 220);
+}
+
+textarea {
+    height: 6em;
+    width: 40em;
+}

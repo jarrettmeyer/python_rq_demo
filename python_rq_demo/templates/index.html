@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Python RQ Demo</title>
+        <link rel="icon" href="{{ url_for('static', filename='favicon-32x32.png')}}" type="image/png">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        <h1>Push Notifications with Python</h1>
+
+        <form>
+            <p>
+                <label>Message</label>
+                <textarea name="message">This is a test message.</textarea>
+            </p>
+            <p>
+                <label>Sleep Duration</label>
+                <input type="number" name="sleep_duration" value="30" min="0" max="600" step="1">
+            </p>
+            <p>
+                <button type="submit" id="submit-form">Send Message</button>
+            </p>
+        </form>
+
+        <script src="https://unpkg.com/jquery@3.4.1/dist/jquery.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+        <script src="{{ url_for('static', filename='app.js') }}"></script>
+        <script src="{{ url_for('static', filename='main.js') }}"></script>
+    </body>
+</html>

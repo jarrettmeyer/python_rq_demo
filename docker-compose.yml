@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+    postgresql:
+        container_name: python_rq_demo_postgresql
+        image: postgres:10
+        environment:
+            POSTGRES_DB: python_rq_demo
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_USER: postgres
+        restart: always
+        ports:
+            - 5432:5432
+        volumes:
+            - pg-data:/var/lib/postgresql/data
+
+    redis:
+        container_name: python_rq_demo_redis
+        image: redis
+        restart: always
+        ports:
+            - 6379:6379
+        volumes:
+            - redis-data:/data
+
+    task-runner:
+        container_name: python_rq_demo_task_runner
+        build:
+            context: .
+            dockerfile: Dockerfile-task-runner
+        env_file:
+            - ./docker.env
+        volumes:
+            - .:/opt/app
+        restart: always
+        depends_on:
+            - postgresql
+            - redis
+
+    web:
+        container_name: python_rq_demo_web
+        build:
+            context: .
+            dockerfile: Dockerfile-web
+        env_file:
+            - ./docker.env
+        ports:
+            - 5000:5000
+        volumes:
+            - .:/opt/app
+        restart: always
+        depends_on:
+            - postgresql
+            - redis
+
+volumes:
+    pg-data:
+        driver: local
+    redis-data:
+        driver: local
