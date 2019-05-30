@@ -17,6 +17,7 @@ SQLALCHEMY_DATABASE_URI: str = os.environ.get('SQLALCHEMY_DATABASE_URI') or _DEF
 SQLALCHEMY_TRACK_MODIFICATIONS: bool = (os.environ.get('SQLALCHEMY_TRACK_MODIFICATIONS') or '1') == '1'
 SECRET_KEY: str = os.environ.get('SECRET_KEY') or _DEFAULT_SECRET_KEY
 SESSION_COOKIE_NAME: str = os.environ.get('SESSION_COOKIE_NAME') or _DEFAULT_COOKIE_NAME
+SYNC_INTERVAL: int = int(os.environ.get('SYNC_INTERVAL') or '15000')
 
 
 def redis_connection() -> Redis:

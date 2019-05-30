@@ -1,4 +1,5 @@
-import logging
+import pytz
+from datetime import datetime, timedelta
 from flask_jsonpify import jsonify
 from rq.job import Job, NoSuchJobError
 from .. import app
@@ -15,15 +16,24 @@ def api_job_status(id):
         return jsonify({
             'id': job.id,
             'status': job.get_status(),
-            'duration': float(_get_result(job, 'duration') or 0),
+            'duration': _get_job_duration(job),
             'title': _get_result(job, 'title'),
             'message': _get_result(job, 'message'),
         })
     except NoSuchJobError:
         return jsonify({
             'id': id,
-            'status': 'no_such_job'
+            'status': 'no_such_job',
+            'duration': -1
         })
+
+
+def _get_job_duration(job: Job) -> float:
+    if job.result is not None and job.result.duration is not None:
+        return job.result.duration
+    else:
+        duration: timedelta = datetime.now().replace(tzinfo=pytz.utc) - job.started_at.replace(tzinfo=pytz.utc)
+        return duration.total_seconds()
 
 
 def _get_result(job: Job, key: str) -> str:

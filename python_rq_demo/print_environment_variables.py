@@ -2,6 +2,7 @@ import logging
 import os
 import re
 from . import logger
+from .util import mask
 
 ENV_BLACKLIST = [
     'GPG_KEY',
@@ -22,5 +23,4 @@ def print_environment_variables():
         if var not in ENV_BLACKLIST:
             logger.debug('%s: %s', var, os.environ.get(var))
         else:
-            value = '*' * len(os.environ.get(var))
-            logger.debug('%s: %s', var, value)
+            logger.debug('%s: %s', var, mask(os.environ.get(var)))

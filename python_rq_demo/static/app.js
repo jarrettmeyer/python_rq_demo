@@ -1,6 +1,9 @@
 $(document).ready(() => {
 
-    const syncInterval = 15 * 1000;
+    // How frequently should the job list be synced with the
+    // server? A smaller interval takes more server resources,
+    // but responds to updates more quickly.
+    const syncInterval = 3 * 1000;
 
     if (window.toastr) {
         window.toastr.options = {
@@ -21,11 +24,30 @@ $(document).ready(() => {
 
     async function checkJobForUpdates(job) {
         let result = await getJSON(`/api/job_status/${job.id}`);
+        job.previousStatus = job.status;
         job.status = result.status;
         job.title = result.title;
         job.message = result.message;
         job.duration = result.duration;
         return job;
+    }
+
+    function getFriendlyDuration(value) {
+        if (!value) {
+            return "NA seconds";
+        }
+        else if (typeof value !== "number") {
+            return "NA seconds";
+        }
+        else if (value > 6000) {
+            return `about ${Math.round(value / (3600))} hours`;
+        }
+        else if (value > 45) {
+            return `about ${Math.round(value / 60)} minutes`;
+        }
+        else {
+            return `${Math.round(value)} seconds`;
+        }
     }
 
     async function getJSON(uri) {
@@ -65,17 +87,16 @@ $(document).ready(() => {
         localStorage.setItem("jobs", jobsString);
     }
 
-    function showJob(job) {
-        switch (job.status) {
-        case "failed":
-            toastr.error(job.message, job.title);
-            break;
-        case "finished":
-            toastr.success(job.message, job.title);
-            break;
-        default:
-            // Do nothing.
-            break;
+    function showJobNotification(job) {
+        // console.log("show job notification:", job);
+        if (job.status === "failed") {
+            toastr.error(job.message || `Job ${job.id} failed. Please see the server logs for more info.`, job.title || "Failed Job");
+        }
+        else if (job.status === "finished") {
+            toastr.success(`${job.message}<br>Duration: ${getFriendlyDuration(job.duration)}.`, job.title);
+        }
+        else if (job.status !== job.previousStatus) {
+            toastr.info(`Job status: ${job.status}`, "Job Status Changed");
         }
     }
 
@@ -93,9 +114,12 @@ $(document).ready(() => {
             }
             mergedJobs.push(job);
 
+            // If we already know the status, and the status is "failed"
+            // or "finished", then there is nothing more to do. Otherwise,
+            // check the job for updates and display a notification.
             if (["failed", "finished"].indexOf(job.status) === -1) {
                 await checkJobForUpdates(job);
-                showJob(job);
+                showJobNotification(job);
             }
         }
 
