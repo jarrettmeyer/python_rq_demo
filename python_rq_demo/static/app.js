@@ -138,6 +138,18 @@ $(document).ready(() => {
         $jobsTable.children().remove();
         for (let i = 0; i < jobs.length; i++) {
             let job = jobs[i];
+
+            let friendlyDuration = null;
+            if (job.duration) {
+                friendlyDuration = getFriendlyDuration(job.duration);
+            }
+            else if (job.created_at) {
+                // JavaScript timestamp is in milliseconds.
+                // Python's timestamp is in seconds.
+                let duration = (Date.now() / 1000) - job.created_at;
+                friendlyDuration = getFriendlyDuration(duration);
+            }
+
             let tr = "";
             tr += `<tr id="job-${job.id}">\n`;
             tr += `    <td>${job.id}</td>\n`;
@@ -145,7 +157,7 @@ $(document).ready(() => {
             tr += `    <td>${job.message}</td>\n`;
             tr += `    <td>${job.title}</td>\n`;
             tr += `    <td>${job.status}</td>\n`;
-            tr += `    <td>${getFriendlyDuration(job.duration)}</td>\n`;
+            tr += `    <td>${friendlyDuration}</td>\n`;
             tr += "</tr>\n";
             $jobsTable.append(tr);
         }

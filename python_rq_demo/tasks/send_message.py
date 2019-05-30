@@ -11,4 +11,11 @@ def send_message(message: str, sleep_duration: float):
     end_time = time.time()
     duration = end_time - start_time
     logger.debug('Done, duration: %f', duration)
-    return TaskResult(title='Done', message=message, duration=duration)
+    return TaskResult(
+        title='Sent Message',
+        message=message,
+        duration=duration,
+        start_time=start_time,
+        end_time=end_time,
+        message_length=len(message)
+    )

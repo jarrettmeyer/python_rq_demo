@@ -1,13 +1,20 @@
 class TaskResult:
 
-    duration: float = 0
-    message: str = ''
-    title: str = ''
+    body: dict = {}
+    duration: float = None
+    message: str = None
+    title: str = None
+
 
     def get(self, key: str):
         return self.__dict__.get(key)
 
-    def __init__(self, **kwargs):
-        self.duration = kwargs.get('duration', 0)
-        self.message = kwargs.get('message', '')
-        self.title = kwargs.get('title', '')
+    def __init__(self, title=None, message=None, duration=None, **kwargs):
+        self.title = title
+        self.message = message
+        self.duration = duration
+        for key in kwargs:
+            self.body[key] = kwargs.get(key, None)
+
+    def __repr__(self):
+        return '<TaskResult title: {0}>'.format(self.title)
