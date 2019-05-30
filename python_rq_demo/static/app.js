@@ -43,10 +43,14 @@ $(document).ready(() => {
             return "NA seconds";
         }
         else if (value > 6000) {
-            return `about ${Math.round(value / (3600))} hours`;
+            let hours = Math.round(value / 3600);
+            let label = (hours > 1) ? "hours" : "hour";
+            return `about ${hours} ${label}`;
         }
         else if (value > 45) {
-            return `about ${Math.round(value / 60)} minutes`;
+            let minutes = Math.round(value / 60);
+            let label = (minutes > 1) ? "minutes" : "minute";
+            return `about ${minutes} ${label}`;
         }
         else {
             return `${Math.round(value)} seconds`;

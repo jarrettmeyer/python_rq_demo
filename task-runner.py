@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from python_rq_demo import print_environment_variables
-from python_rq_demo.config import rq_connection, rq_worker
+from python_rq_demo.tasks import rq_connection, rq_worker
 
 
 def main():

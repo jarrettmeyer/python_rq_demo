@@ -1,8 +1,4 @@
-import logging
 import os
-from redis import Redis
-from rq import Connection, Queue, Worker
-from rq.registry import FinishedJobRegistry
 
 # Default values.
 _DEFAULT_COOKIE_NAME = 'python_rq_demo'
@@ -18,23 +14,3 @@ SQLALCHEMY_TRACK_MODIFICATIONS: bool = (os.environ.get('SQLALCHEMY_TRACK_MODIFIC
 SECRET_KEY: str = os.environ.get('SECRET_KEY') or _DEFAULT_SECRET_KEY
 SESSION_COOKIE_NAME: str = os.environ.get('SESSION_COOKIE_NAME') or _DEFAULT_COOKIE_NAME
 SYNC_INTERVAL: int = int(os.environ.get('SYNC_INTERVAL') or '15000')
-
-
-def redis_connection() -> Redis:
-    return Redis.from_url(REDIS_URI)
-
-
-def rq_connection() -> Connection:
-    return Connection(redis_connection())
-
-
-def rq_finished_job_registry() -> FinishedJobRegistry:
-    return FinishedJobRegistry('default', redis_connection())
-
-
-def rq_queue() -> Queue:
-    return Queue('default', connection=redis_connection())
-
-
-def rq_worker() -> Worker:
-    return Worker('default')

@@ -5,14 +5,7 @@ class TaskResult:
     title: str = ''
 
     def get(self, key: str):
-        return self.toDict().get(key)
-
-    def toDict(self) -> dict:
-        return {
-            'duration': self.duration,
-            'message': self.message,
-            'title': self.title,
-        }
+        return self.__dict__.get(key)
 
     def __init__(self, **kwargs):
         self.duration = kwargs.get('duration', 0)

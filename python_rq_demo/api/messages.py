@@ -3,8 +3,7 @@ from flask import request
 from flask_jsonpify import jsonify
 from rq.job import Job
 from .. import app
-from ..config import rq_queue
-from ..tasks import send_message
+from ..tasks import rq_queue, send_message
 
 
 logger: logging.Logger = logging.getLogger('api_messages')
