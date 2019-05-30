@@ -1,9 +1,8 @@
 $(document).ready(() => {
 
     const $form = $("form");
-    const submitURI = "/api/messages";
 
-    $form.on("submit", (e) => {
+    $form.on("submit", async (e) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -12,15 +11,29 @@ $(document).ready(() => {
             sleep_duration: $('input[name="sleep_duration"]').val()
         };
 
-        app.postJSON(submitURI, data)
-            .then((result) => {
-                let jobs = app.getJobs();
-                jobs.push({
-                    id: result.id,
-                    status: result.status
-                });
-                app.saveJobs(jobs);
-            });
+        let opts = {
+            method: "POST",
+            mode: "cors",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify(data)
+        }
+
+        let response = await fetch('/api/messages', opts);
+        if (response.ok) {
+            let job = await response.json();
+            console.log("new job:", job);
+            let jobsItem = localStorage.getItem("jobs");
+            let jobs = (jobsItem) ? JSON.parse(jobsItem) : [];
+            jobs.push(job);
+            localStorage.setItem("jobs", JSON.stringify(jobs));
+            return Promise.resolve(job);
+        }
+        else {
+            return Promise.reject(response);
+        }
+
     });
 
 });

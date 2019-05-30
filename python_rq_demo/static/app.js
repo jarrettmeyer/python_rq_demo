@@ -1,5 +1,7 @@
 $(document).ready(() => {
 
+    const syncInterval = 15 * 1000;
+
     if (window.toastr) {
         window.toastr.options = {
             closeButton: true,
@@ -17,119 +19,91 @@ $(document).ready(() => {
         };
     }
 
-
-    window.app = window.app || {};
-
-
-    window.app.checkForUpdates = async () => {
-        let jobs = app.getJobs();
-        let promises = jobs.map(async (job) => {
-            if (['failed', 'finished'].indexOf(job.status) >= 0) {
-                return job;
-            }
-            else {
-                let uri = `/api/job_status/${job.id}`;
-                let result = await app.getJSON(uri);
-                job.status = result.status;
-                job.title = result.title;
-                job.message = result.message;
-                job.duration = result.duration;
-                switch (job.status) {
-                case 'failed':
-                    toastr.error(job.message, job.title)
-                    break;
-                case 'finished':
-                    toastr.success(job.message, job.title);
-                    break;
-                case 'no_such_job':
-                    let index = jobs.indexOf(job);
-                    jobs.splice(index, 1);
-                    break;
-                }
-                return job;
-            }
-        });
-        await Promise.all(promises);
-        app.saveJobs(jobs);
-        return jobs;
-    };
-
-
-    window.app.getJobs = () => {
-        let jobsItem = window.localStorage.getItem("jobs");
-        if (jobsItem) {
-            return JSON.parse(jobsItem);
-        }
-        else {
-            return [];
-        }
+    async function checkJobForUpdates(job) {
+        let result = await getJSON(`/api/job_status/${job.id}`);
+        job.status = result.status;
+        job.title = result.title;
+        job.message = result.message;
+        job.duration = result.duration;
+        return job;
     }
 
-
-    window.app.getJSON = async (uri) => {
+    async function getJSON(uri) {
         let options = {
             method: "GET",
             mode: "cors"
         };
-        let response = await fetch(uri, options)
-        if (response.ok) {
-            return response.json();
-        }
-        else {
-            console.warn(response);
-            return {};
-        }
-    }
-
-
-    window.app.postJSON = async (uri, data) => {
-        let options = {
-            method: "POST",
-            mode: "cors",
-            headers: {
-                "Content-type": "application/json"
-            },
-            body: JSON.stringify(data)
-        };
         let response = await fetch(uri, options);
         if (response.ok) {
-            return response.json();
+            return await response.json();
         }
-        else {
-            console.warn(response);
-            return {};
-        }
+        return Promise.reject(response);
     }
 
-
-    window.app.saveJobs = (jobs) => {
-        let jobsString = JSON.stringify(jobs);
-        window.localStorage.setItem("jobs", jobsString);
+    function getLocalJobs() {
+        let jobsItem = localStorage.getItem("jobs");
+        if (jobsItem) {
+            return JSON.parse(jobsItem);
+        }
+        return [];
     }
 
-
-    window.app.syncJobs = async () => {
-        jobs = app.getJobs();
-        let result = await app.getJSON('/api/jobs');
-        let addCount = 0;
-        result.job_ids.forEach(id => {
-            let existingJob = jobs.find(j => j.id === id);
-            if (!existingJob) {
-                jobs.push({
-                    id: id
-                });
-                addCount += 1;
-            }
+    async function getServerJobs() {
+        let result = await getJSON('/api/jobs');
+        let jobs = result.job_ids.map(id => {
+            return {
+                id: id,
+                status: null
+            };
         });
-        if (addCount > 0) {
-            console.log(`syncJobs added ${addCount} jobs to the local database`);
+        // console.log("server jobs:", jobs);
+        return jobs;
+    }
+
+    function saveLocalJobs(jobs) {
+        let jobsString = JSON.stringify(jobs);
+        localStorage.setItem("jobs", jobsString);
+    }
+
+    function showJob(job) {
+        switch (job.status) {
+        case "failed":
+            toastr.error(job.message, job.title);
+            break;
+        case "finished":
+            toastr.success(job.message, job.title);
+            break;
+        default:
+            // Do nothing.
+            break;
         }
-        app.saveJobs(jobs);
-    };
+    }
 
+    async function syncJobs() {
+        let localJobs = getLocalJobs();
+        let remoteJobs = await getServerJobs();
 
-    app.syncJobs();
-    setInterval(app.syncJobs, 60 * 1000);
-    setInterval(app.checkForUpdates, 5 * 1000);
+        let mergedJobs = [];
+        for (let i = 0; i < remoteJobs.length; i++) {
+            let remoteJob = remoteJobs[i];
+            let job = localJobs.find(job => job.id === remoteJob.id);
+            if (!job) {
+                job = remoteJob;
+                console.log(`Adding new job ${job.id} to local array.`);
+            }
+            mergedJobs.push(job);
+
+            if (["failed", "finished"].indexOf(job.status) === -1) {
+                await checkJobForUpdates(job);
+                showJob(job);
+            }
+        }
+
+        saveLocalJobs(mergedJobs);
+    }
+
+    setInterval(() => {
+        syncJobs();
+    }, syncInterval);
 
 });
