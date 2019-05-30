@@ -47,6 +47,23 @@ pre {
     background-color: rgb(220, 220, 220);
 }
 
+table {
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+
+tr th, tr td {
+    border-top: 1px solid rgb(100, 100, 100);
+    border-bottom: 1px solid rgb(100, 100, 100);
+    text-align: center;
+}
+
+tr th {
+    font-weight: bold;
+    text-align: center;
+}
+
 textarea {
     height: 6em;
     width: 40em;

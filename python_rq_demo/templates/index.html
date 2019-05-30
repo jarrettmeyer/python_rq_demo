@@ -23,6 +23,20 @@
             </p>
         </form>
 
+        <table id="jobs-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Message</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Duration</th>
+                </tr>
+            </thead>
+            <tbody id="jobs-table-body">
+            </tbody>
+        </table>
+
         <script src="https://unpkg.com/jquery@3.4.1/dist/jquery.min.js"></script>
         <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
         <script src="{{ url_for('static', filename='app.js') }}"></script>

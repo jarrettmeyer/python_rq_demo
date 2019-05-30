@@ -5,6 +5,8 @@ $(document).ready(() => {
     // but responds to updates more quickly.
     const syncInterval = 3 * 1000;
 
+    const $jobsTable = $("#jobs-table-body");
+
     if (window.toastr) {
         window.toastr.options = {
             closeButton: true,
@@ -124,6 +126,23 @@ $(document).ready(() => {
         }
 
         saveLocalJobs(mergedJobs);
+        updateJobsTable(mergedJobs);
+    }
+
+    function updateJobsTable(jobs) {
+        $jobsTable.children().remove();
+        for (let i = 0; i < jobs.length; i++) {
+            let job = jobs[i];
+            let tr = "";
+            tr += `<tr id="job-${job.id}">\n`;
+            tr += `    <td>${job.id}</td>\n`;
+            tr += `    <td>${job.message}</td>\n`;
+            tr += `    <td>${job.title}</td>\n`;
+            tr += `    <td>${job.status}</td>\n`;
+            tr += `    <td>${getFriendlyDuration(job.duration)}</td>\n`;
+            tr += "</tr>\n";
+            $jobsTable.append(tr);
+        }
     }
 
     setInterval(() => {
