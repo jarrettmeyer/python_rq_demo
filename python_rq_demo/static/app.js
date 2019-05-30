@@ -27,6 +27,7 @@ $(document).ready(() => {
     async function checkJobForUpdates(job) {
         let result = await getJSON(`/api/job_status/${job.id}`);
         job.previousStatus = job.status;
+        job.created_at = result.created_at;
         job.status = result.status;
         job.title = result.title;
         job.message = result.message;
@@ -136,6 +137,7 @@ $(document).ready(() => {
             let tr = "";
             tr += `<tr id="job-${job.id}">\n`;
             tr += `    <td>${job.id}</td>\n`;
+            tr += `    <td>${new Date(job.created_at)}</td>\n`;
             tr += `    <td>${job.message}</td>\n`;
             tr += `    <td>${job.title}</td>\n`;
             tr += `    <td>${job.status}</td>\n`;

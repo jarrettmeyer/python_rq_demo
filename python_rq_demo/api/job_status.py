@@ -15,6 +15,7 @@ def api_job_status(id):
         Task.update(job)
         return jsonify({
             'id': job.id,
+            'created_at': job.created_at.timestamp(),
             'status': job.get_status(),
             'duration': _get_job_duration(job),
             'title': _get_result(job, 'title'),
@@ -23,6 +24,7 @@ def api_job_status(id):
     except NoSuchJobError:
         return jsonify({
             'id': id,
+            'created_at': -1,
             'status': 'no_such_job',
             'duration': -1
         })

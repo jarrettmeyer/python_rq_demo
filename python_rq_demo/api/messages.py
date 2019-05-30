@@ -22,7 +22,8 @@ def api_messages():
 
     return jsonify({
         'id': job.id,
-        'status': job.get_status()
+        'created_at': job.created_at.timestamp(),
+        'status': job.get_status(),
     })
 
 
