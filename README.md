@@ -53,7 +53,7 @@ flask db upgrade
 
 ### Open Your Browser
 
-Finally, open your browser to [http://localhost:5000](http://localhost:5000).
+Finally, open your browser to [http://localhost](http://localhost/). You should now see the application up and running successfully.
 
 ## Questions, Comment, etc.
 
