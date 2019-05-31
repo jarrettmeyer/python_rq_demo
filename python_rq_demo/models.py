@@ -1,7 +1,6 @@
 import json
-from rq.job import Job
 from sqlalchemy import Column, DateTime, Integer, Numeric, String, Text
-from .. import db
+from . import db
 
 
 class Task(db.Model):
@@ -22,6 +21,7 @@ class Task(db.Model):
     timeout = Column(Integer())
     title = Column(String(256))
     message = Column(Text())
+    meta = Column(String(1024))
 
     def __repr___(self):
         return '<Task {0}, status: {1}>'.format(self.id, self.status)
