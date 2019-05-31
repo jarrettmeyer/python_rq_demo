@@ -1,3 +1,6 @@
+"""Configure the application. Most values are pulled from system
+environment variables, with sane defaults."""
+
 import os
 
 # Default values.

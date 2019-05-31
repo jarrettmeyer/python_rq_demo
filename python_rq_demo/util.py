@@ -1,5 +1,6 @@
 def add_if_unique(target, source):
-    """Adds unique items from source to target."""
+    """Adds unique items from source to target. Does not add item
+    to the target if it is already present."""
     for item in source:
         if item not in target:
             target.append(item)

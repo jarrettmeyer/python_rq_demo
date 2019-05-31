@@ -1,3 +1,5 @@
+"""Define our database models."""
+
 import json
 from sqlalchemy import Column, DateTime, Integer, Numeric, String, Text
 from . import db
